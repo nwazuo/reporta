@@ -7,13 +7,22 @@ import {
   Paper,
   TextInput,
   Title,
+  Modal,
+  Box,
+  Select,
+  Textarea,
+  Stack,
+  Code,
+  Switch,
 } from "@mantine/core";
 import IncidentList from "../components/IncidentList";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
+import { useState } from "react";
+import { useForm } from "@mantine/form";
 
 TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo("en-US");
+const timeAgo = new TimeAgo();
 
 const incidentsData = [
   {
@@ -79,7 +88,73 @@ const Incidents = () => {
   );
 };
 
+const ReportForm = () => {
+  const form = useForm({});
+  const [submittedValues, setSubmittedValues] = useState("");
+
+  return (
+    <Box sx={{ maxWidth: 400 }} mx="auto">
+      <form
+        onSubmit={form.onSubmit((values) =>
+          setSubmittedValues(JSON.stringify(values, null, 2))
+        )}
+      >
+        <Stack spacing="md">
+          <TextInput
+            label="Title"
+            placeholder="Title"
+            {...form.getInputProps("title")}
+          />
+          <Select
+            label="Type of incident"
+            placeholder="Pick one"
+            data={[
+              { value: "bug", label: "Bug" },
+              { value: "downtime", label: "Downtime" },
+              { value: "suggestion", label: "Suggestion" },
+              { value: "other", label: "Other" },
+            ]}
+            {...form.getInputProps("type")}
+          />
+          <TextInput
+            label="Summary"
+            placeholder="Short summary of incident"
+            {...form.getInputProps("summary")}
+          />
+          <Textarea
+            label="Description"
+            placeholder="Describe incident in detail"
+            minRows={5}
+            {...form.getInputProps("content")}
+          />
+          <Switch label="Report privately" {...form.getInputProps("private")} />
+          <Button type="submit" mt="md">
+            Submit
+          </Button>
+        </Stack>
+      </form>
+
+      {submittedValues && <Code block>{submittedValues}</Code>}
+    </Box>
+  );
+};
+
+const ReportModal = ({ opened, setOpened }) => {
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => setOpened(false)}
+      title="Report an incident"
+      centered
+    >
+      <ReportForm />
+    </Modal>
+  );
+};
+
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div>
       <Head>
@@ -102,11 +177,12 @@ export default function Home() {
             platforms/services? Please reach out to us and we'll be glad to help
             with a fix.
           </p>
-          <Button variant="white" mt={16}>
+          <Button variant="white" mt={16} onClick={() => setModalOpen(true)}>
             Report
           </Button>
         </Paper>
         <Incidents />
+        <ReportModal opened={modalOpen} setOpened={setModalOpen} />
       </Container>
     </div>
   );
