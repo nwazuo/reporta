@@ -1,7 +1,10 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "../styles/globals.css";
+
+const queryClient = new QueryClient();
 
 export default function App(props) {
   const { Component, pageProps } = props;
@@ -16,25 +19,27 @@ export default function App(props) {
         />
       </Head>
 
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          colorScheme: "light",
-          globalStyles: (theme) => ({
-            body: {
-              background: "rgb(248, 249, 250)",
-              ".c-container": {
-                width: "860px",
-                marginLeft: "auto",
-                marginRight: "auto",
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            colorScheme: "light",
+            globalStyles: (theme) => ({
+              body: {
+                background: "rgb(248, 249, 250)",
+                ".c-container": {
+                  width: "860px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                },
               },
-            },
-          }),
-        }}
-      >
-        <Component {...pageProps} />
-      </MantineProvider>
+            }),
+          }}
+        >
+          <Component {...pageProps} />
+        </MantineProvider>
+      </QueryClientProvider>
     </>
   );
 }

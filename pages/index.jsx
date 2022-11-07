@@ -81,6 +81,8 @@ const Search = () => {
 };
 
 const Incidents = () => {
+  
+
   return (
     <Container mt={48} px={0}>
       <Search />
