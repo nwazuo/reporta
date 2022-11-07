@@ -14,12 +14,16 @@ import {
   Stack,
   Code,
   Switch,
+  Image,
+  Text,
+  SimpleGrid,
 } from "@mantine/core";
 import IncidentList from "../components/IncidentList";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { useState } from "react";
 import { useForm } from "@mantine/form";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo();
@@ -91,6 +95,18 @@ const Incidents = () => {
 const ReportForm = () => {
   const form = useForm({});
   const [submittedValues, setSubmittedValues] = useState("");
+  const [files, setFiles] = useState([]);
+
+  const previews = files.map((file, index) => {
+    const imageURL = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageURL}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageURL) }}
+      />
+    );
+  });
 
   return (
     <Box sx={{ maxWidth: 400 }} mx="auto">
@@ -127,6 +143,16 @@ const ReportForm = () => {
             minRows={5}
             {...form.getInputProps("content")}
           />
+          <Dropzone onDrop={setFiles} accept={IMAGE_MIME_TYPE}>
+            <Text align="center">Drop file(s) here or click to upload</Text>
+          </Dropzone>
+          <SimpleGrid
+            cols={4}
+            breakpoints={[{ maxWidth: "sm", cols: 1 }]}
+            mt={previews.length > 0 ? "xl" : 0}
+          >
+            {previews}
+          </SimpleGrid>
           <Switch label="Report privately" {...form.getInputProps("private")} />
           <Button type="submit" mt="md">
             Submit
