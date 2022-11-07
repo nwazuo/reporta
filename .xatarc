@@ -1,0 +1,8 @@
+{
+  "databaseURL": "https://chizonwazuo-s-workspace-udt9vs.us-east-1.xata.sh/db/acme-reporta",
+  "codegen": {
+    "output": "utils/xata.js",
+    "moduleType": "esm",
+    "declarations": true
+  }
+}
